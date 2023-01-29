@@ -38,3 +38,18 @@ func TestLearnMock_functionNotCalled(t *testing.T) {
 
 	// When
 }
+
+func TestLearnMock_functionCalledWithWrongArguments(t *testing.T) {
+	// Given
+	ctrl := gomock.NewController(t)
+	f := mock_use_case.NewMockFoo(ctrl)
+
+	// Then
+	f.
+		EXPECT().
+		Bar(gomock.Eq(99)).
+		Times(1)
+
+	// When
+	f.Bar(10)
+}
