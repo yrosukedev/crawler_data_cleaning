@@ -24,3 +24,17 @@ func TestLearnMock_functionCalled(t *testing.T) {
 	// When
 	f.Bar(99)
 }
+
+func TestLearnMock_functionNotCalled(t *testing.T) {
+	// Given
+	ctrl := gomock.NewController(t)
+	f := mock_use_case.NewMockFoo(ctrl)
+
+	// Then
+	f.
+		EXPECT().
+		Bar(gomock.Eq(99)).
+		Times(0)
+
+	// When
+}
