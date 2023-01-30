@@ -47,6 +47,8 @@ func (u *CleanUseCase) Run() error {
 	return nil
 }
 
+// !!! SMELL: Primitive Obsession
+// []Field should be encapsulated by a type, and transformRecord() should be moved to that type.
 func (u *CleanUseCase) transformRecord(record []Field) ([]Field, error) {
 	var transformedRecord []Field
 	for _, field := range record {
