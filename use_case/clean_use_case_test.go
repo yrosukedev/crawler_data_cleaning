@@ -41,7 +41,6 @@ func TestOneRow_oneField(t *testing.T) {
 	}
 	useCase := NewCleanUseCase(ctx, reader, writer, transGroup)
 
-	i := 0
 	rows := [][]Field{
 		{
 			{
@@ -51,13 +50,7 @@ func TestOneRow_oneField(t *testing.T) {
 		},
 	}
 
-	reader.EXPECT().Read().DoAndReturn(func() ([]Field, error) {
-		if i < len(rows) {
-			defer func() { i++ }()
-			return rows[i], nil
-		}
-		return nil, io.EOF
-	}).AnyTimes()
+	givenReaderReadsRows(reader, rows)
 
 	transformedRows := [][]Field{
 		{
@@ -75,4 +68,15 @@ func TestOneRow_oneField(t *testing.T) {
 
 	// When
 	useCase.Run()
+}
+
+func givenReaderReadsRows(reader *MockDataReader, rows [][]Field) {
+	i := 0
+	reader.EXPECT().Read().DoAndReturn(func() ([]Field, error) {
+		if i < len(rows) {
+			defer func() { i++ }()
+			return rows[i], nil
+		}
+		return nil, io.EOF
+	}).AnyTimes()
 }
