@@ -21,11 +21,32 @@ func NewCleanUseCase(ctx context.Context, reader DataReader, writer DataWriter, 
 	}
 }
 
-func (u *CleanUseCase) Run() {
+func (u *CleanUseCase) Run() error {
 	for {
-		_, err := u.reader.Read()
+		record, err := u.reader.Read()
 		if err == io.EOF {
 			break
 		}
+
+		if err != nil {
+			return err
+		}
+
+		var transformedRecord []Field
+		for _, field := range record {
+			transformedField, err := field.transformValue(u.transformerGroup[field.Name])
+			if err != nil {
+				return err
+			}
+
+			transformedRecord = append(transformedRecord, *transformedField)
+		}
+
+		err = u.writer.Write(transformedRecord)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
