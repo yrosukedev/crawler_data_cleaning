@@ -33,13 +33,9 @@ func (u *CleanUseCase) Run() error {
 		}
 
 		var transformedRecord []Field
-		for _, field := range record {
-			transformedField, err := field.transformValue(u.transformerGroup[field.Name])
-			if err != nil {
-				return err
-			}
-
-			transformedRecord = append(transformedRecord, *transformedField)
+		transformedRecord, err = u.transformRecord(record)
+		if err != nil {
+			return err
 		}
 
 		err = u.writer.Write(transformedRecord)
@@ -49,4 +45,17 @@ func (u *CleanUseCase) Run() error {
 	}
 
 	return nil
+}
+
+func (u *CleanUseCase) transformRecord(record []Field) ([]Field, error) {
+	var transformedRecord []Field
+	for _, field := range record {
+		transformedField, err := field.transformValue(u.transformerGroup[field.Name])
+		if err != nil {
+			return nil, err
+		}
+
+		transformedRecord = append(transformedRecord, *transformedField)
+	}
+	return transformedRecord, nil
 }
